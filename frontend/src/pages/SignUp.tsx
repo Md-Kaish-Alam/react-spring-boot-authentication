@@ -1,26 +1,47 @@
+import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [role, setRole] = useState("user");
   const [error, setError] = useState("");
 
   const handleSignUp = async () => {
     try {
-      if (!fullName || !email || !password || !confirmPassword || !mobileNumber) {
+      if (
+        !fullName ||
+        !email ||
+        !password ||
+        !confirmPassword ||
+        !mobileNumber
+      ) {
         setError("Please fill in all fields.");
         return;
       }
 
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
-      } 
+      }
 
-      console.log({ fullName, email, password, mobileNumber });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response = await axios.post("http://localhost:8081/auth/signup", {
+        fullName,
+        email,
+        password,
+        role,
+        mobileNumber,
+      });
+
+      if (response.status) {
+        navigate("/dashboard");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       // Handle signup error
       console.error(
@@ -29,7 +50,7 @@ const SignUp = () => {
       );
       setError(error.response ? error.response.data : error.message);
     }
-  }
+  };
 
   return (
     <div className="h-screen flex items-center justify-center">
@@ -72,6 +93,14 @@ const SignUp = () => {
               className="border p-2 w-full rounded-md"
               onChange={(e) => setMobileNumber(e.target.value)}
             />
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="border p-2 w-full rounded-md"
+            >
+              <option value="user">User</option>
+              <option value="Admin">Admin</option>
+            </select>
             {error && <p className="text-red-500">{error}</p>}
             <button
               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

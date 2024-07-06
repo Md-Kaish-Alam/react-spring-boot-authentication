@@ -1,4 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    sessionStorage.clear();
+
+    navigate("/login");
+  };
   return (
     <div className="h-screen flex items-center justify-center">
       <div className="border w-[30vw] shadow-md p-10">
@@ -6,7 +15,10 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold">Welcome to Dashboard</h1>
           <p>Hello User !</p>
           <p>You are successfully logged in.</p>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>

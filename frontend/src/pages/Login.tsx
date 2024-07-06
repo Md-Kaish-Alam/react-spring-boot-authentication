@@ -1,8 +1,11 @@
+import axios from "axios";
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,8 +17,19 @@ const Login = () => {
         setError("Please enter email and password");
         return;
       }
-      console.log({ email, password });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      const response = await axios.post("http://localhost:8081/auth/signin", {
+        email: email,
+        password: password,
+      });
+      if (response.status === 403) {
+        alert("Login failed");
+      } else {
+        login();
+        navigate("/dashboard");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(
         "Login failed:",
